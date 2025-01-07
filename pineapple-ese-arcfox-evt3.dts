@@ -10,5 +10,5 @@
 	model = "arcfox";
 	compatible = "qcom,pineapple-mtp", "qcom,pineapple", "qcom,mtp";
 	qcom,msm-id = <557 0x10000>;
-	qcom,board-id = <0x43 0xA300>, <(ARCFOX_RADIO_JP<<8 | 0x43) 0xA000>;
+	qcom,board-id = <0x43 0xA300>, <(ARCFOX_RADIO_JP<<8 | 0x43) 0xA000>, <0x43 0xC200>;
 };
