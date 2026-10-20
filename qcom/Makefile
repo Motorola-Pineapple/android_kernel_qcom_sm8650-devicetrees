@@ -13,6 +13,42 @@ add-overlays = $(foreach o,$1,$(foreach b,$2,$(eval $(basename $b)-$(basename $o
 
 ifneq ($(CONFIG_ARCH_QTI_VM), y)
 
+ifeq ($(CONFIG_MMI_DEVICE_DTBS),y)
+
+ifeq ($(CONFIG_ARCF_DTB),y)
+PINEAPPLE_BASE_DTB += pineapple-arcf-base.dtb pineapple-v2-arcf-base.dtb
+PINEAPPLE_BOARDS += pineapple-arcf-evt1a-overlay.dtbo
+PINEAPPLE_BOARDS += pineapple-arcf-evt2-overlay.dtbo
+endif
+
+ifeq ($(CONFIG_ARCFOX_DTB),y)
+PINEAPPLE_BASE_DTB += cliffs-arcfox-base.dtb
+PINEAPPLE_BOARDS += cliffs-arcfox-evt3-overlay.dtbo
+PINEAPPLE_BOARDS += cliffs-arcfox-dvt1b-overlay.dtbo
+PINEAPPLE_BOARDS += cliffs-arcfox-dvt1c-overlay.dtbo
+PINEAPPLE_BOARDS += cliffs-arcfox-jp-evt-overlay.dtbo
+PINEAPPLE_BOARDS += cliffs-arcfox-pvt2-overlay.dtbo
+endif
+
+ifeq ($(CONFIG_CTWOV_DTB),y)
+PINEAPPLE_BASE_DTB += pineapple-ctwov-base.dtb pineapple-v2-ctwov-base.dtb
+PINEAPPLE_BOARDS += pineapple-ctwov-evb-overlay.dtbo
+endif
+
+ifeq ($(CONFIG_CTWO_DTB),y)
+PINEAPPLE_BASE_DTB += cliffs-ctwo-base.dtb
+PINEAPPLE_BOARDS += cliffs-ctwo-evb3-overlay.dtbo
+PINEAPPLE_BOARDS += cliffs-ctwo-dvt1-overlay.dtbo
+PINEAPPLE_BOARDS += cliffs-ctwo-dvt1b-overlay.dtbo
+endif
+
+
+PINEAPPLE_BOARDS += pineapple-dpm-overlay.dtbo
+
+pineapple-dtb-$(CONFIG_ARCH_PINEAPPLE) += \
+	$(call add-overlays, $(PINEAPPLE_BOARDS), $(PINEAPPLE_BASE_DTB))
+
+else
 PINEAPPLE_BASE_DTB += pineapple-v2.dtb pineapple-qcm.dtb
 PINEAPPLE_APQ_BASE_DTB += pineapplep-v2.dtb pineapplep-sg-v2.dtb pineappleq-v2.dtb pineapplep-qcs.dtb
 
@@ -60,6 +96,8 @@ pineapple-dtb-$(CONFIG_ARCH_CLIFFS) += \
 	$(call add-overlays, $(CLIFFS_BOARDS) $(NOAPQ_CLIFFS_BOARDS),$(CLIFFS_BASE_DTB))\
 	$(call add-overlays, $(CLIFFS_BOARDS),$(CLIFFS_APQ_BASE_DTB))
 pineapple-overlays-dtb-$(CONFIG_ARCH_CLIFFS) += $(CLIFFS_BOARDS) $(NOAPQ_CLIFFS_BOARDS) $(CLIFFS_BASE_DTB) $(CLIFFS_APQ_BASE_DTB)
+
+endif  # end of CONFIG_MMI_DEVICE_DTBS
 
 VOLCANO_BASE_DTB += volcano.dtb volcano6.dtb volcano6i-fp1.dtb volcano6i-fp2.dtb volcano6i-fp3.dtb volcano6i-fp4.dtb
 VOLCANO_APQ_BASE_DTB += volcano6p.dtb volcano6ip-fp1.dtb volcano6ip-fp2.dtb volcano6ip-fp3.dtb volcano6ip-fp4.dtb volcanop.dtb

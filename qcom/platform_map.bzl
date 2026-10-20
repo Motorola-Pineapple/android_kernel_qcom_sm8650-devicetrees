@@ -1,3 +1,5 @@
+load("//msm-kernel:moto_product.bzl", "mmi_product_name")
+
 _platform_map = {
     "autogvm": {
         "dtb_list": [
@@ -179,40 +181,17 @@ _platform_map = {
     },
     "pineapple": {
         "dtb_list": [
-            {"name": "pineapple-v2.dtb"},
-            {
-                "name": "pineapplep-v2.dtb",
-                "apq": True,
-            },
-            {
-                "name": "pineapplep-sg-v2.dtb",
-                "apq": True,
-            },
-            {"name": "pineapple-qcm.dtb"},
-            {
-                "name": "pineapplep-qcs.dtb",
-                "apq": True,
-            },
-            {
-                "name": "pineappleq-v2.dtb",
-                "apq": True,
-            },
+            { "name": "pineapple-arcf-base.dtb", "product": "arcf", },
+            { "name": "pineapple-v2-arcf-base.dtb", "product": "arcf", },
+            { "name": "pineapple-ctwov-base.dtb", "product": "ctwov", },
+            { "name": "pineapple-v2-ctwov-base.dtb", "product": "ctwov", },
         ],
         "dtbo_list": [
-            {"name": "pineapple-atp-overlay.dtbo"},
-            {"name": "pineapple-cdp-nfc-overlay.dtbo"},
-            {"name": "pineapple-cdp-overlay.dtbo"},
-            {"name": "pineapple-mtp-nfc-overlay.dtbo"},
-            {"name": "pineapple-mtp-overlay.dtbo"},
-            {"name": "pineapple-qrd-overlay.dtbo"},
-            {"name": "pineapple-qrd-sku2-overlay.dtbo"},
-            {"name": "pineapple-rcm-overlay.dtbo"},
-            {"name": "pineapplep-hdk-overlay.dtbo"},
-            {"name": "pineapple-dpm-overlay.dtbo"},
-            {"name": "pineapplep-aim500-overlay.dtbo"},
-            {"name": "pineapplep-aim500-v2-overlay.dtbo"},
+            {"name": "pineapple-arcf-evt1a-overlay.dtbo", "product": "arcf", },
+            {"name": "pineapple-arcf-evt2-overlay.dtbo", "product": "arcf", },
+            {"name": "pineapple-ctwov-evb-overlay.dtbo", "product": "ctwov", },
         ],
-        "binary_compatible_with": ["cliffs", "volcano"],
+        "binary_compatible_with": ["cliffs"],
     },
     "pineapple-le": {
         "dtb_list": [
@@ -357,33 +336,18 @@ _platform_map = {
     },
     "cliffs": {
         "dtb_list": [
-            {"name": "cliffs.dtb"},
-            {"name": "cliffs7.dtb"},
-            {
-                "name": "cliffsp.dtb",
-                "apq": True,
-            },
-            {
-                "name": "cliffs7p.dtb",
-                "apq": True,
-            },
+            { "name": "cliffs-ctwo-base.dtb", "product": "ctwo", },
+            { "name": "cliffs-arcfox-base.dtb", "product": "arcfox", },
         ],
         "dtbo_list": [
-            {"name": "cliffs-atp-overlay.dtbo"},
-            {"name": "cliffs-cdp-overlay.dtbo"},
-            {"name": "cliffs-mtp-overlay.dtbo"},
-            {"name": "cliffs-qrd-overlay.dtbo"},
-            {"name": "cliffs-rcm-overlay.dtbo"},
-            {"name": "cliffs-mtp-kiwi-2s-nfc-wcd9395-overlay.dtbo"},
-            {"name": "cliffs-mtp-peach-2s-nfc-wcd9395-overlay.dtbo"},
-            {"name": "cliffs-mtp-pm8550b-overlay.dtbo"},
-            {"name": "cliffs-mtp-kiwi-2s-nfc-wcd9395-pm8550b-overlay.dtbo"},
-            {"name": "cliffs-mtp-peach-2s-nfc-wcd9395-pm8550b-overlay.dtbo"},
-            {"name": "cliffs-rcm-qhdp-overlay.dtbo"},
-            {"name": "cliffs-rcm-fhdp-kiwi-overlay.dtbo"},
-            {"name": "cliffs-rcm-qhdp-kiwi-overlay.dtbo"},
-            {"name": "cliffs-mtp-kiwi-overlay.dtbo"},
-            {"name": "cliffs-mtp-peach-overlay.dtbo"},
+            {"name": "cliffs-ctwo-evb3-overlay.dtbo", "product": "ctwo", },
+            {"name": "cliffs-ctwo-dvt1-overlay.dtbo", "product": "ctwo", },
+            {"name": "cliffs-ctwo-dvt1b-overlay.dtbo", "product": "ctwo", },
+            {"name": "cliffs-arcfox-evt3-overlay.dtbo", "product": "arcfox", },
+            {"name": "cliffs-arcfox-dvt1b-overlay.dtbo", "product": "arcfox", },
+            {"name": "cliffs-arcfox-dvt1c-overlay.dtbo", "product": "arcfox", },
+            {"name": "cliffs-arcfox-jp-evt-overlay.dtbo", "product": "arcfox", },
+            {"name": "cliffs-arcfox-pvt2-overlay.dtbo", "product": "arcfox", },
         ],
     },
     "pineapple-tuivm": {
@@ -720,11 +684,18 @@ def _get_dtb_lists(target, dt_overlay_supported):
         "dtb_list": [],
         "dtbo_list": [],
     }
-
+    product = mmi_product_name
     for dtb_node in [target] + _platform_map[target].get("binary_compatible_with", []):
-        ret["dtb_list"].extend(_platform_map[dtb_node].get("dtb_list", []))
+        for dtb in _platform_map[dtb_node].get("dtb_list", []):
+            if (dtb.get("product","default") == product) or (dtb.get("product","default") == "default") :
+                # print("target:{} product:{} append dtb_list name {}".format(target, product, dtb.get("name")))
+                ret["dtb_list"].append({"name": "{}".format(dtb.get("name"))})
+
         if dt_overlay_supported:
-            ret["dtbo_list"].extend(_platform_map[dtb_node].get("dtbo_list", []))
+            for dtbo in _platform_map[dtb_node].get("dtbo_list", []):
+                if (dtbo.get("product","default") == product) or (dtbo.get("product","default") == "default") :
+                    # print("target:{} product:{} append dtbo_list name {}".format(target, product, dtbo.get("name")))
+                    ret["dtbo_list"].append({"name": "{}".format(dtbo.get("name"))})
         else:
             # Translate the dtbo list into dtbs we can append to main dtb_list
             for dtb in _platform_map[dtb_node].get("dtb_list", []):
